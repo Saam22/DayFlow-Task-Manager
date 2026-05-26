@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DayFlow — Task Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Crimson+Pro:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="header-date" id="header-date"></div>
+      <h1 class="header-title">Day<span>Flow</span></h1>
+    </div>
+    <div class="header-stats">
+      <div class="stat-bubble done">
+        <div class="num" id="stat-done">0</div>
+        <div class="lbl">Done</div>
+      </div>
+      <div class="stat-bubble total">
+        <div class="num" id="stat-total">0</div>
+        <div class="lbl">Total</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Progress -->
+  <div class="progress-section">
+    <div class="progress-top">
+      <span class="progress-text" id="progress-text">No tasks yet</span>
+      <span class="progress-pct" id="progress-pct">0%</span>
+    </div>
+    <div class="big-progress">
+      <div class="big-progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="input-section">
+    <div class="input-row">
+      <input class="task-input" id="task-input" type="text" placeholder="What needs to be done today?" maxlength="120">
+      <button class="add-btn" onclick="addTask()">+ Add Task</button>
+    </div>
+    <div class="extra-row">
+      <button class="tag-btn active" data-tag="work" onclick="toggleTag(this)">💼 Work</button>
+      <button class="tag-btn" data-tag="personal" onclick="toggleTag(this)">👤 Personal</button>
+      <button class="tag-btn" data-tag="health" onclick="toggleTag(this)">💪 Health</button>
+      <button class="tag-btn" data-tag="urgent" onclick="toggleTag(this)">🔥 Urgent</button>
+      <div class="priority-row">
+        <span class="prio-label">Priority:</span>
+        <button class="prio-btn selected" data-p="low" onclick="setPriority(this)">Low</button>
+        <button class="prio-btn" data-p="med" onclick="setPriority(this)">Med</button>
+        <button class="prio-btn" data-p="high" onclick="setPriority(this)">High</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters + Search -->
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter(this)">All</button>
+    <button class="filter-btn" data-filter="active" onclick="setFilter(this)">Active</button>
+    <button class="filter-btn" data-filter="done" onclick="setFilter(this)">Completed</button>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="search" placeholder="Search..." oninput="renderTasks()">
+    </div>
+  </div>
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <div class="top-bar-title" id="filter-label">All tasks <span id="task-count"></span></div>
+    <button class="clear-btn" onclick="clearCompleted()">🗑 Clear done</button>
+  </div>
+
+  <!-- Tasks List -->
+  <div class="tasks-container" id="tasks-container">
+    <div class="empty-state">
+      <div class="empty-icon">📝</div>
+      <div class="empty-title">Your day is clear</div>
+      <div class="empty-sub">Add your first task to get started!</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>
