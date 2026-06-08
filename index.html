@@ -4,92 +4,253 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DayFlow — Task Manager</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Crimson+Pro:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-theme="light" data-color="orange">
 
-<div class="app">
-
-  <!-- Header -->
-  <header class="header">
-    <div class="header-left">
-      <div class="header-date" id="header-date"></div>
-      <h1 class="header-title">Day<span>Flow</span></h1>
-    </div>
-    <div class="header-stats">
-      <div class="stat-bubble done">
-        <div class="num" id="stat-done">0</div>
-        <div class="lbl">Done</div>
-      </div>
-      <div class="stat-bubble total">
-        <div class="num" id="stat-total">0</div>
-        <div class="lbl">Total</div>
-      </div>
-    </div>
-  </header>
-
-  <!-- Progress -->
-  <div class="progress-section">
-    <div class="progress-top">
-      <span class="progress-text" id="progress-text">No tasks yet</span>
-      <span class="progress-pct" id="progress-pct">0%</span>
-    </div>
-    <div class="big-progress">
-      <div class="big-progress-fill" id="progress-fill" style="width:0%"></div>
-    </div>
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <span class="brand-icon">◈</span>
+    <span class="brand-name">Day<em>Flow</em></span>
   </div>
 
-  <!-- Input -->
-  <div class="input-section">
-    <div class="input-row">
-      <input class="task-input" id="task-input" type="text" placeholder="What needs to be done today?" maxlength="120">
-      <button class="add-btn" onclick="addTask()">+ Add Task</button>
-    </div>
-    <div class="extra-row">
-      <button class="tag-btn active" data-tag="work" onclick="toggleTag(this)">💼 Work</button>
-      <button class="tag-btn" data-tag="personal" onclick="toggleTag(this)">👤 Personal</button>
-      <button class="tag-btn" data-tag="health" onclick="toggleTag(this)">💪 Health</button>
-      <button class="tag-btn" data-tag="urgent" onclick="toggleTag(this)">🔥 Urgent</button>
-      <div class="priority-row">
-        <span class="prio-label">Priority:</span>
-        <button class="prio-btn selected" data-p="low" onclick="setPriority(this)">Low</button>
-        <button class="prio-btn" data-p="med" onclick="setPriority(this)">Med</button>
-        <button class="prio-btn" data-p="high" onclick="setPriority(this)">High</button>
+  <nav class="sidebar-nav">
+    <button class="nav-item active" data-view="tasks" onclick="switchView('tasks', this)">
+      <span class="nav-icon">✦</span> Tasks
+    </button>
+    <button class="nav-item" data-view="dashboard" onclick="switchView('dashboard', this)">
+      <span class="nav-icon">◉</span> Dashboard
+    </button>
+  </nav>
+
+  <div class="sidebar-section-title">Projects</div>
+  <div class="projects-list" id="projects-list"></div>
+  <button class="add-project-btn" onclick="openProjectModal()">+ New Project</button>
+
+  <div class="sidebar-footer">
+    <div class="theme-controls">
+      <button class="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode" id="theme-toggle-btn">
+        <span id="theme-icon">🌙</span>
+      </button>
+      <div class="color-dots">
+        <button class="cdot orange active" onclick="setColorTheme('orange')" title="Orange"></button>
+        <button class="cdot blue" onclick="setColorTheme('blue')" title="Blue"></button>
+        <button class="cdot green" onclick="setColorTheme('green')" title="Green"></button>
+        <button class="cdot purple" onclick="setColorTheme('purple')" title="Purple"></button>
       </div>
     </div>
+    <div class="sidebar-date" id="sidebar-date"></div>
+  </div>
+</aside>
+
+<!-- Main content -->
+<div class="main-wrap">
+  <button class="sidebar-toggle" onclick="toggleSidebar()" id="sidebar-toggle">☰</button>
+
+  <!-- TASKS VIEW -->
+  <div class="view" id="view-tasks">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-date" id="header-date"></div>
+        <h1 class="topbar-title" id="view-title">All Tasks</h1>
+      </div>
+      <div class="header-stats">
+        <div class="stat-bubble done">
+          <div class="num" id="stat-done">0</div>
+          <div class="lbl">Done</div>
+        </div>
+        <div class="stat-bubble total">
+          <div class="num" id="stat-total">0</div>
+          <div class="lbl">Total</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Progress -->
+    <div class="progress-section">
+      <div class="progress-top">
+        <span class="progress-text" id="progress-text">No tasks yet</span>
+        <span class="progress-pct" id="progress-pct">0%</span>
+      </div>
+      <div class="big-progress"><div class="big-progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+
+    <!-- Input -->
+    <div class="input-section">
+      <div class="input-row">
+        <input class="task-input" id="task-input" type="text" placeholder="What needs to be done today?" maxlength="200">
+        <button class="add-btn" onclick="addTask()">+ Add</button>
+      </div>
+      <div class="extra-row">
+        <button class="tag-btn active" data-tag="work" onclick="toggleTag(this)">💼 Work</button>
+        <button class="tag-btn" data-tag="personal" onclick="toggleTag(this)">👤 Personal</button>
+        <button class="tag-btn" data-tag="health" onclick="toggleTag(this)">💪 Health</button>
+        <button class="tag-btn" data-tag="urgent" onclick="toggleTag(this)">🔥 Urgent</button>
+        <div class="priority-row">
+          <span class="prio-label">Priority:</span>
+          <button class="prio-btn selected" data-p="low" onclick="setPriority(this)">Low</button>
+          <button class="prio-btn" data-p="med" onclick="setPriority(this)">Med</button>
+          <button class="prio-btn" data-p="high" onclick="setPriority(this)">High</button>
+        </div>
+        <div class="due-row">
+          <label class="due-label">Due:</label>
+          <input type="datetime-local" id="due-input" class="due-input">
+        </div>
+        <div class="project-select-wrap">
+          <select class="project-select" id="task-project-select">
+            <option value="">No Project</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all" onclick="setFilter(this)">All</button>
+      <button class="filter-btn" data-filter="active" onclick="setFilter(this)">Active</button>
+      <button class="filter-btn" data-filter="done" onclick="setFilter(this)">Done</button>
+      <button class="filter-btn" data-filter="overdue" onclick="setFilter(this)">⚠ Overdue</button>
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" id="search" placeholder="Search..." oninput="renderTasks()">
+      </div>
+    </div>
+
+    <div class="top-bar">
+      <div class="top-bar-title" id="filter-label">All tasks</div>
+      <button class="clear-btn" onclick="clearCompleted()">🗑 Clear done</button>
+    </div>
+
+    <div class="tasks-container" id="tasks-container"></div>
   </div>
 
-  <!-- Filters + Search -->
-  <div class="filters">
-    <button class="filter-btn active" data-filter="all" onclick="setFilter(this)">All</button>
-    <button class="filter-btn" data-filter="active" onclick="setFilter(this)">Active</button>
-    <button class="filter-btn" data-filter="done" onclick="setFilter(this)">Completed</button>
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input class="search-input" id="search" placeholder="Search..." oninput="renderTasks()">
+  <!-- DASHBOARD VIEW -->
+  <div class="view hidden" id="view-dashboard">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-date" id="dash-date"></div>
+        <h1 class="topbar-title">Dashboard</h1>
+      </div>
+    </header>
+
+    <div class="dash-grid">
+      <div class="dash-card stat-card">
+        <div class="stat-card-icon">✅</div>
+        <div class="stat-card-num" id="dash-today">0</div>
+        <div class="stat-card-lbl">Completed Today</div>
+      </div>
+      <div class="dash-card stat-card">
+        <div class="stat-card-icon">📅</div>
+        <div class="stat-card-num" id="dash-week-pct">0%</div>
+        <div class="stat-card-lbl">Weekly Rate</div>
+      </div>
+      <div class="dash-card stat-card">
+        <div class="stat-card-icon">🔥</div>
+        <div class="stat-card-num" id="dash-streak">0</div>
+        <div class="stat-card-lbl">Day Streak</div>
+      </div>
+      <div class="dash-card stat-card">
+        <div class="stat-card-icon">⚠</div>
+        <div class="stat-card-num overdue-num" id="dash-overdue">0</div>
+        <div class="stat-card-lbl">Overdue</div>
+      </div>
+    </div>
+
+    <div class="dash-row">
+      <div class="dash-card dash-chart-card">
+        <div class="dash-card-title">7-Day Completion</div>
+        <div class="chart-wrap" id="week-chart"></div>
+      </div>
+      <div class="dash-card dash-overdue-card">
+        <div class="dash-card-title">Overdue Tasks</div>
+        <div id="overdue-list" class="overdue-list"></div>
+      </div>
+    </div>
+
+    <div class="dash-row">
+      <div class="dash-card">
+        <div class="dash-card-title">By Project</div>
+        <div id="project-breakdown" class="project-breakdown"></div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-title">By Tag</div>
+        <div id="tag-breakdown" class="tag-breakdown"></div>
+      </div>
     </div>
   </div>
-
-  <!-- Top bar -->
-  <div class="top-bar">
-    <div class="top-bar-title" id="filter-label">All tasks <span id="task-count"></span></div>
-    <button class="clear-btn" onclick="clearCompleted()">🗑 Clear done</button>
-  </div>
-
-  <!-- Tasks List -->
-  <div class="tasks-container" id="tasks-container">
-    <div class="empty-state">
-      <div class="empty-icon">📝</div>
-      <div class="empty-title">Your day is clear</div>
-      <div class="empty-sub">Add your first task to get started!</div>
-    </div>
-  </div>
-
 </div>
 
-<!-- Toast -->
+<!-- Task Detail Modal -->
+<div class="modal-overlay hidden" id="task-modal-overlay" onclick="closeTaskModal(event)">
+  <div class="modal task-modal" id="task-modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modal-task-title">Task Details</h2>
+      <button class="modal-close" onclick="closeTaskModalDirect()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <label class="modal-label">Notes</label>
+        <textarea class="modal-textarea" id="modal-notes" placeholder="Add notes, links, or context..." rows="4"></textarea>
+      </div>
+      <div class="modal-section">
+        <label class="modal-label">Subtasks</label>
+        <div class="subtask-input-row">
+          <input type="text" class="subtask-input" id="subtask-input" placeholder="Add a subtask..." maxlength="120">
+          <button class="subtask-add-btn" onclick="addSubtask()">Add</button>
+        </div>
+        <div class="subtasks-list" id="subtasks-list"></div>
+        <div class="subtask-progress-wrap" id="subtask-progress-wrap">
+          <div class="subtask-progress-bar"><div class="subtask-progress-fill" id="subtask-progress-fill"></div></div>
+          <span class="subtask-progress-txt" id="subtask-progress-txt"></span>
+        </div>
+      </div>
+      <div class="modal-section">
+        <label class="modal-label">Link</label>
+        <input type="url" class="modal-link-input" id="modal-link" placeholder="https://...">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-save-btn" onclick="saveTaskDetails()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Project Modal -->
+<div class="modal-overlay hidden" id="project-modal-overlay" onclick="closeProjectModal(event)">
+  <div class="modal project-modal" id="project-modal">
+    <div class="modal-header">
+      <h2 class="modal-title">New Project</h2>
+      <button class="modal-close" onclick="closeProjectModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <label class="modal-label">Project Name</label>
+        <input type="text" class="modal-text-input" id="project-name-input" placeholder="e.g. Study, Client Work..." maxlength="40">
+      </div>
+      <div class="modal-section">
+        <label class="modal-label">Color</label>
+        <div class="color-picker" id="color-picker">
+          <button class="cp-dot active" data-color="#e85d04" style="background:#e85d04" onclick="selectProjectColor(this)"></button>
+          <button class="cp-dot" data-color="#1d4e89" style="background:#1d4e89" onclick="selectProjectColor(this)"></button>
+          <button class="cp-dot" data-color="#2d6a4f" style="background:#2d6a4f" onclick="selectProjectColor(this)"></button>
+          <button class="cp-dot" data-color="#5a189a" style="background:#5a189a" onclick="selectProjectColor(this)"></button>
+          <button class="cp-dot" data-color="#c1121f" style="background:#c1121f" onclick="selectProjectColor(this)"></button>
+          <button class="cp-dot" data-color="#0077b6" style="background:#0077b6" onclick="selectProjectColor(this)"></button>
+          <button class="cp-dot" data-color="#d4a017" style="background:#d4a017" onclick="selectProjectColor(this)"></button>
+          <button class="cp-dot" data-color="#6b2d8b" style="background:#6b2d8b" onclick="selectProjectColor(this)"></button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-save-btn" onclick="saveProject()">Create Project</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
+
 <script src="app.js"></script>
 </body>
 </html>
